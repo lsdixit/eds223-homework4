@@ -1,0 +1,207 @@
+---
+title: "Determining optimal suitability in Exclusive Economic Zones (EEZ) on the West Coast of USA"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+Load packages
+```{r}
+library(tidyverse)
+library(here)
+library(tmap)
+library(stars)
+library(raster)
+library(patchwork)
+```
+
+Read in data
+```{r}
+# exclusive economic zones for west coast
+eez <- st_read(here("data", "wc_regions_clean.shp"))
+
+# bathymetry
+depth <- rast(here("data", "depth.tif"))
+
+# sea surface temperature
+# read in as a stack
+filelist <- list.files(here("data", "average_annual_sst"), full.names = TRUE)
+sst <- rast(filelist)
+# ^ or could use c() 
+```
+
+## Step 1: Prepare the data
+Check the CRS of all data and transform if needed. 
+```{r}
+# check crs for all data files
+crs(sst, describe = TRUE)$code 
+st_crs(eez)$epsg
+crs(depth, describe = TRUE)$code
+
+# transform sea surface temp to 4326
+crs(sst) <- 'epsg:4326'
+# check again
+if (crs(sst, describe = TRUE)$code == st_crs(eez)$epsg) {
+  print("CRS match!")
+} else {
+  stop("CRS do not match, must transform")
+}
+```
+
+## Step 2: Process data
+Clean sea surface temperature and depth data.
+```{r}
+# look at layer names
+names(sst)
+
+# find the mean SST from all years
+# sst_avg <- app(sst, mean, na.rm = TRUE)
+sst_avg <- mean(sst)
+names(sst_avg) # just one layer!
+
+# convert sst from kelvin to celsius
+sst_avg <- sst_avg - 273.15
+
+# crop depth raster to the extent of sst 
+depth_crop <- crop(depth, floor(ext(sst_avg)))
+# check extents match 
+ext(depth_crop) == ext(sst_avg) # they are very close, but extents don't match
+
+# resample depth data to match resolution to sst data
+# use nearest neighbor approach
+depth_resample <- resample(depth_crop, sst_avg, method = "near")
+
+# check for match in resolution, extent, and crs
+if (res(sst_avg)[1] == res(depth_resample)[1] &
+    res(sst_avg)[2] == res(depth_resample)[2] &
+    ext(sst_avg) == ext(depth_resample) &
+    crs(sst_avg) == crs(depth_resample)){
+  print("Resolution, extent, and CRS match!")
+} else {
+  stop("Resolution, extent, and/or CRS do not match.")
+}
+
+# combine depth and sst
+check_match <- c(depth_resample, sst_avg)
+```
+
+## Step 3: Find suitable locations
+Find suitable locations for Oysters.
+
+Sea Surface Temperatuer : 11-30
+
+Depth : 0-70
+
+```{r}
+# min max sst and depth are replaceable for a function
+# reclassify for suitable conditions
+rcl_sst <- matrix(c(-Inf, 11, 0,
+                    11, 30, 1, 
+                    30, Inf, 0),
+                    ncol = 3, byrow = TRUE)
+
+rcl_depth <- matrix(c(-Inf, -70, 0,
+                      -70, 0, 1,
+                      0, Inf, 0),
+                      ncol = 3, byrow = TRUE)
+
+# reclassify per layer for each matrix
+sst_reclass <- classify(sst_avg, rcl_sst)
+summary(sst_reclass)[1] == "Min.   :0.000  "
+summary(sst_reclass)[6] == "Max.   :1.000  "
+depth_reclass <- classify(depth_resample, rcl_depth)
+summary(depth_reclass)[1] == "Min.   :0.00000  "
+summary(depth_reclass)[6] == "Max.   :1.00000  "
+
+# depth x sst will return only cells with both 1s as 1
+multiplication_func <- function(x, y) {
+  x * y
+}
+suitable_cells <- lapp(c(sst_reclass, depth_reclass), fun = multiplication_func)
+summary(suitable_cells)
+
+# create mask with EEZ so nothing too deep in the ocean and no on-land is returned
+suitable_cells_west <- mask(suitable_cells, eez)
+summary(suitable_cells_west)
+
+plot(suitable_cells)
+plot(suitable_cells_west)
+
+# should have columns of boolean, EEZ area, coords x and y 
+# cells_west <- st_as_sf(st_as_stars(suitable_cells_west))
+
+eez_vect <- vect(eez)
+suitable_cells_west_zone <- zonal(suitable_cells_west, eez_vect, fun = "notNA", as.polygons = TRUE)
+#suitable_cells_west_zone <- rast(suitable_cells_west_zone)
+
+# find cell size of EEZ areas
+eez_rast <- rast(eez)
+eez_area <- cellSize(eez_rast, unit="km")
+summary(eez_area)
+
+# how many cells equal 1 after the mask?
+# cells that equal 1 x cell size
+# check crs, extent, and resolution match before doing algebra
+ext(suitable_cells_west) == ext(eez_area)
+ext(eez_area) <- crop(depth, floor(ext(sst_avg)))
+res(suitable_cells_west) == res(eez_area)
+crs(suitable_cells_west, describe = TRUE)$code == crs(eez_area, describe = TRUE)$code
+
+suitable_cells_west * eez_area
+
+# for each eez polygon zone, how many pixels/cells are there that are suitable
+# this is the area suitable for oysters
+# tm_shape(eez) +
+#   tm_polygons()
+
+tm_shape()
+
+plot(suitable_cells_west)
+```
+
+# Step 4: Create a reproducible workflow
+Compile the workflow above into a function to recreate a figure for Red Abalone.
+
+Sea Surface Temperature : 8 - 18
+
+Depth : 0 - 24
+```{r}
+suitable_location <- function(sst_low, sst_high, depth_low, depth_high) {
+  # set up reclassification matrix
+  rcl_sst <- matrix(c(-Inf, sst_low, 0,
+                    sst_low, sst_high, 1, 
+                    sst_high, Inf, 0),
+                    ncol = 3, byrow = TRUE)
+
+  rcl_depth <- matrix(c(-Inf, depth_low, depth_high,
+                      depth_low, depth_high, 1,
+                      depth_high, Inf, 0),
+                      ncol = 3, byrow = TRUE)
+  
+  # reclassify depth and sst data
+  sst_reclass <- classify(sst_avg, rcl_sst)
+  depth_reclass <- classify(depth_resample, rcl_depth)
+  
+  # multiply reclassified layers to return cells that are suitable for our species
+  multiplication_func <- function(x, y) {
+  x * y
+  }
+  suitable_cells <- lapp(c(sst_reclass, depth_reclass), fun = multiplication_func)
+  summary(suitable_cells)
+  
+  # create mask with EEZ so nothing too deep in the ocean and no on-land is returned
+  suitable_cells_west <- mask(suitable_cells, eez)
+  
+  
+  eez_vect <- vect(eez)
+  suitable_cells_west_zone <- zonal(suitable_cells_west, eez_vect, fun = "notNA",
+                                    as.raster = TRUE)
+  
+}
+
+  
+  
+  
+}
+```
+
