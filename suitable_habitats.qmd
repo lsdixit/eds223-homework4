@@ -148,8 +148,10 @@ summary(suitable_cell_area)
 
 # sum across zones to get total suitable area
 total_area <- zonal(suitable_cell_area, eez_rast, fun="sum", na.rm = TRUE)
-knitr::kable(total_area, format = "html", col.names = c("Region ID", "Total Suitable Area (km)"), table.attr = 'data-quarto-disable-processing="true"') %>% 
-  kableExtra::kable_styling(bootstrap_options = c("basic", "hover"), full_width = FALSE)
+knitr::kable(total_area, format = "html", 
+             col.names = c("Region ID", "Total Suitable Area (km)"), table.attr = 'data-quarto-disable-processing="true"') %>% 
+  kableExtra::kable_styling(bootstrap_options = c("basic", "hover"), 
+                            full_width = FALSE)
 
 # join to spatial data to map
 total_area <- left_join(total_area, eez, by = "rgn_id")
@@ -157,6 +159,7 @@ total_area <- st_as_sf(total_area)
 
 # map total area in each suitable zone
 tm_shape(total_area) +
+  tm_basemap("CartoDB.PositronNoLabels") +
   tm_polygons(fill = "area",
               breaks = c(60000, 160000, 170000, 202000, 206000, Inf),
               title = "Suitable Area (km)",
@@ -218,6 +221,7 @@ suitable_location <- function(sst_low, sst_high, depth_low, depth_high, species_
   
   # map suitable areas
   tm_shape(total_area) +
+  tm_basemap("CartoDB.PositronNoLabels") +
   tm_polygons(fill = "area",
               breaks = c(60000, 160000, 170000, 202000, 206000, Inf),
               title = "Suitable Area (km)",

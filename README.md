@@ -8,8 +8,20 @@ This project focuses on developing a workflow to determing habitat suitability b
 Information on optimal sea surface temperature and depth for red abalone were collected from [Sea Life Base](https://www.sealifebase.ca/search.php). Sea surface temperature from 2008-2012 were originally generated through [NOAA's Coral Reef Watch daily 5km SST anomalies](https://coralreefwatch.noaa.gov/product/5km/index_5km_ssta.php). Depth of the ocean was characterized with [General Bathymetric Chart of the Oceans (GEBCO](https://www.gebco.net/data-products/gridded-bathymetry-data#area). Maritime boundaries for exclusive economic zones (EEZ) were characterized by [marineregions.org](https://www.marineregions.org/eez.php).
 
 # Contents
+```bash
+├── README.md: README file.
+├── eds223-homework4.Rproj: project file
+├── README.html: Rendered project preview.
+├── suitable_habitats_files: Rendered project files.
+├── suitable_habitats: Rendered project as html.
+├── suitable_habitats.qmd: File containing all code and output for this project.
 
-
+├── data (not pushed to GitHub, this is the recommended structure)
+│   └── depth.tif
+│   └── EEZ.shp
+│   └── average_annual_sst
+│   │   ├── annual_sst.tif 2008-2012
+```
 
 # Citations
 - Hall, S. J., Delaporte, A., Phillips, M. J., Beveridge, M. & O’Keefe, M. Blue Frontiers: Managing the Environmental Costs of Aquaculture (The WorldFish Center, Penang, Malaysia, 2011).
