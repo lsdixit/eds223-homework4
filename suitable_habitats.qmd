@@ -146,8 +146,10 @@ knitr::kable(suitable_cells_west_zone, format = "html", col.names = c("Region ID
 suitable_cell_area <- cellSize(suitable_cells_west, unit="km")
 summary(suitable_cell_area)
 
+# multiply against NAs to remove extra values
+suitable_cell_area_values <- suitable_cell_area * suitable_cells_west
 # sum across zones to get total suitable area
-total_area <- zonal(suitable_cell_area, eez_rast, fun="sum", na.rm = TRUE)
+total_area <- zonal(suitable_cell_area_values, eez_rast, fun="sum", na.rm = TRUE)
 knitr::kable(total_area, format = "html", 
              col.names = c("Region ID", "Total Suitable Area (km)"), table.attr = 'data-quarto-disable-processing="true"') %>% 
   kableExtra::kable_styling(bootstrap_options = c("basic", "hover"), 
@@ -161,7 +163,6 @@ total_area <- st_as_sf(total_area)
 tm_shape(total_area) +
   tm_basemap("CartoDB.PositronNoLabels") +
   tm_polygons(fill = "area",
-              breaks = c(60000, 160000, 170000, 202000, 206000, Inf),
               title = "Suitable Area (km)",
               palette = "-viridis") +
   tm_scalebar(breaks = c(0, 100, 200, 300),
@@ -213,9 +214,11 @@ suitable_location <- function(sst_low, sst_high, depth_low, depth_high, species_
   # find cell size of suitable cell areas
   eez_rast <- rasterize(eez, y = suitable_cells_west, field = "rgn_id")
   suitable_cell_area <- cellSize(suitable_cells_west, unit="km")
+  # multiply against NAs to remove extra values
+  suitable_cell_area_values <- suitable_cell_area * suitable_cells_west
   
   # sum across zones to get total suitable area, and join with spatial data to map
-  total_area <- zonal(suitable_cell_area, eez_rast, fun="sum", na.rm = TRUE)
+  total_area <- zonal(suitable_cell_area_values, eez_rast, fun="sum", na.rm = TRUE)
   total_area <- left_join(total_area, eez, by = "rgn_id")
   total_area <- st_as_sf(total_area)
   
@@ -223,7 +226,6 @@ suitable_location <- function(sst_low, sst_high, depth_low, depth_high, species_
   tm_shape(total_area) +
   tm_basemap("CartoDB.PositronNoLabels") +
   tm_polygons(fill = "area",
-              breaks = c(60000, 160000, 170000, 202000, 206000, Inf),
               title = "Suitable Area (km)",
               palette = "-viridis") +
   tm_scalebar(breaks = c(0, 100, 200, 300),
@@ -241,3 +243,6 @@ suitable_location(sst_low = 8,
                   species_name = "Red Abalone")
 ```
 
+README 
+![](README1.png)
+![](README2.png)
