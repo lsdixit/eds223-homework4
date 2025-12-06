@@ -357,12 +357,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  3rd Qu.:17.58  
  Max.   :18.56  </code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sum across zones to get total suitable area</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>total_area <span class="ot">&lt;-</span> <span class="fu">zonal</span>(suitable_cell_area, eez_rast, <span class="at">fun=</span><span class="st">"sum"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(total_area, <span class="at">format =</span> <span class="st">"html"</span>, </span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Region ID"</span>, <span class="st">"Total Suitable Area (km)"</span>), <span class="at">table.attr =</span> <span class="st">'data-quarto-disable-processing="true"'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"basic"</span>, <span class="st">"hover"</span>), </span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># multiply against NAs to remove extra values</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>suitable_cell_area_values <span class="ot">&lt;-</span> suitable_cell_area <span class="sc">*</span> suitable_cells_west</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># sum across zones to get total suitable area</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>total_area <span class="ot">&lt;-</span> <span class="fu">zonal</span>(suitable_cell_area_values, eez_rast, <span class="at">fun=</span><span class="st">"sum"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(total_area, <span class="at">format =</span> <span class="st">"html"</span>, </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Region ID"</span>, <span class="st">"Total Suitable Area (km)"</span>), <span class="at">table.attr =</span> <span class="st">'data-quarto-disable-processing="true"'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  kableExtra<span class="sc">::</span><span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"basic"</span>, <span class="st">"hover"</span>), </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>                            <span class="at">full_width =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table data-quarto-disable-processing="true" class="table table-hover" style="width: auto !important; margin-left: auto; margin-right: auto;">
  <thead>
@@ -374,23 +376,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
   <tr>
    <td style="text-align:right;"> 1 </td>
-   <td style="text-align:right;"> 179866.42 </td>
+   <td style="text-align:right;"> 1074.2720 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 2 </td>
-   <td style="text-align:right;"> 163715.00 </td>
+   <td style="text-align:right;"> 178.0268 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 3 </td>
-   <td style="text-align:right;"> 202779.85 </td>
+   <td style="text-align:right;"> 4069.8766 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 4 </td>
-   <td style="text-align:right;"> 206535.86 </td>
+   <td style="text-align:right;"> 3757.2849 </td>
   </tr>
   <tr>
    <td style="text-align:right;"> 5 </td>
-   <td style="text-align:right;"> 67813.69 </td>
+   <td style="text-align:right;"> 2378.3137 </td>
   </tr>
 </tbody>
 </table>
@@ -403,13 +405,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(total_area) <span class="sc">+</span></span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_basemap</span>(<span class="st">"CartoDB.PositronNoLabels"</span>) <span class="sc">+</span></span>
 <span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill =</span> <span class="st">"area"</span>,</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">60000</span>, <span class="dv">160000</span>, <span class="dv">170000</span>, <span class="dv">202000</span>, <span class="dv">206000</span>, <span class="cn">Inf</span>),</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">title =</span> <span class="st">"Suitable Area (km)"</span>,</span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">palette =</span> <span class="st">"-viridis"</span>) <span class="sc">+</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scalebar</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>),</span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">"West Coast Suitable Area : Oysters"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">title =</span> <span class="st">"Suitable Area (km)"</span>,</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">palette =</span> <span class="st">"-viridis"</span>) <span class="sc">+</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scalebar</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>),</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="st">"West Coast Suitable Area : Oysters"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -457,32 +458,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># find cell size of suitable cell areas</span></span>
 <span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a>  eez_rast <span class="ot">&lt;-</span> <span class="fu">rasterize</span>(eez, <span class="at">y =</span> suitable_cells_west, <span class="at">field =</span> <span class="st">"rgn_id"</span>)</span>
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>  suitable_cell_area <span class="ot">&lt;-</span> <span class="fu">cellSize</span>(suitable_cells_west, <span class="at">unit=</span><span class="st">"km"</span>)</span>
-<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sum across zones to get total suitable area, and join with spatial data to map</span></span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">zonal</span>(suitable_cell_area, eez_rast, <span class="at">fun=</span><span class="st">"sum"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">left_join</span>(total_area, eez, <span class="at">by =</span> <span class="st">"rgn_id"</span>)</span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(total_area)</span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># map suitable areas</span></span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(total_area) <span class="sc">+</span></span>
-<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_basemap</span>(<span class="st">"CartoDB.PositronNoLabels"</span>) <span class="sc">+</span></span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill =</span> <span class="st">"area"</span>,</span>
-<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>              <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">60000</span>, <span class="dv">160000</span>, <span class="dv">170000</span>, <span class="dv">202000</span>, <span class="dv">206000</span>, <span class="cn">Inf</span>),</span>
-<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>              <span class="at">title =</span> <span class="st">"Suitable Area (km)"</span>,</span>
-<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>              <span class="at">palette =</span> <span class="st">"-viridis"</span>) <span class="sc">+</span></span>
-<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scalebar</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>),</span>
-<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
-<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
-<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="fu">paste</span>(<span class="st">"West Coast Suitable Area :"</span>, species_name))</span>
-<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># multiply against NAs to remove extra values</span></span>
+<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>  suitable_cell_area_values <span class="ot">&lt;-</span> suitable_cell_area <span class="sc">*</span> suitable_cells_west</span>
+<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># sum across zones to get total suitable area, and join with spatial data to map</span></span>
+<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">zonal</span>(suitable_cell_area_values, eez_rast, <span class="at">fun=</span><span class="st">"sum"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">left_join</span>(total_area, eez, <span class="at">by =</span> <span class="st">"rgn_id"</span>)</span>
+<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a>  total_area <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(total_area)</span>
+<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># map suitable areas</span></span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(total_area) <span class="sc">+</span></span>
+<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_basemap</span>(<span class="st">"CartoDB.PositronNoLabels"</span>) <span class="sc">+</span></span>
+<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill =</span> <span class="st">"area"</span>,</span>
+<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>              <span class="at">title =</span> <span class="st">"Suitable Area (km)"</span>,</span>
+<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a>              <span class="at">palette =</span> <span class="st">"-viridis"</span>) <span class="sc">+</span></span>
+<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_scalebar</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>),</span>
+<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a>              <span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
+<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_compass</span>(<span class="at">position =</span> <span class="fu">c</span>(<span class="st">"left"</span>, <span class="st">"bottom"</span>)) <span class="sc">+</span></span>
+<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_title</span>(<span class="fu">paste</span>(<span class="st">"West Coast Suitable Area :"</span>, species_name))</span>
+<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function with suitable conditions for red abalone</span></span>
-<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a><span class="fu">suitable_location</span>(<span class="at">sst_low =</span> <span class="dv">8</span>, </span>
-<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sst_high =</span> <span class="dv">18</span>, </span>
-<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">depth_low =</span> <span class="sc">-</span><span class="dv">24</span>, </span>
-<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a>                  <span class="at">depth_high =</span> <span class="dv">0</span>, </span>
-<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a>                  <span class="at">species_name =</span> <span class="st">"Red Abalone"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function with suitable conditions for red abalone</span></span>
+<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a><span class="fu">suitable_location</span>(<span class="at">sst_low =</span> <span class="dv">8</span>, </span>
+<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">sst_high =</span> <span class="dv">18</span>, </span>
+<span id="cb35-56"><a href="#cb35-56" aria-hidden="true" tabindex="-1"></a>                  <span class="at">depth_low =</span> <span class="sc">-</span><span class="dv">24</span>, </span>
+<span id="cb35-57"><a href="#cb35-57" aria-hidden="true" tabindex="-1"></a>                  <span class="at">depth_high =</span> <span class="dv">0</span>, </span>
+<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a>                  <span class="at">species_name =</span> <span class="st">"Red Abalone"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -491,6 +493,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+<section id="step-5-conclusions" class="level1">
+<h1>Step 5: Conclusions</h1>
+<p>For oysters, we can see the are on the west coast with the most suitable area is in the EEZ of the central area of California’s coast, with the next highest in southern California. For red abalone, there is generally less total suitable area on the west coast but the EEZ with the most suitable area is in Washington, with the rest of the west coast being fairly comparable in suitable area.</p>
+<p>Native oysters, Olympia oysters for example, have a range that spreads all along the west coast. Their suitable EEZ areas make sense, with most of the area very close to shore where temperature and depth satisfies their ecological needs. Red abalone are also found along the entirety of the west coast, however with smaller suitable temperature and depth ranges, it makes sense they have a much smaller area of suitability.</p>
+<p>While these maps are very informative for finding areas of the west coast for potential farming or restoration, for example, they only describe a small portion of what makes an area suitable for a species. There can be factors such as habitat and food availability, insulation from extreme weather events, competition or predation, or other ecological and environmental attributes that can influence the suitability of an area.</p>
 <p>README <img src="README1.png" class="img-fluid"> <img src="README2.png" class="img-fluid"></p>
 </section>
 

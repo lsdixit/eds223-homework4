@@ -243,6 +243,14 @@ suitable_location(sst_low = 8,
                   species_name = "Red Abalone")
 ```
 
+# Step 5: Conclusions
+For oysters, we can see the are on the west coast with the most suitable area is in the EEZ of the central area of California's coast, with the next highest in southern California. For red abalone, there is generally less total suitable area on the west coast but the EEZ with the most suitable area is in Washington, with the rest of the west coast being fairly comparable in suitable area.
+
+Native oysters, Olympia oysters for example, have a range that spreads all along the west coast. Their suitable EEZ areas make sense, with most of the area very close to shore where temperature and depth satisfies their ecological needs. Red abalone are also found along the entirety of the west coast, however with smaller suitable temperature and depth ranges, it makes sense they have a much smaller area of suitability. 
+
+While these maps are very informative for finding areas of the west coast for potential farming or restoration, for example, they only describe a small portion of what makes an area suitable for a species. There can be factors such as habitat and food availability, insulation from extreme weather events, competition or predation, or other ecological and environmental attributes that can influence the suitability of an area.
+
+
 README 
 ![](README1.png)
 ![](README2.png)
